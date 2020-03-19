@@ -2,7 +2,6 @@ package com.gestionmagasin.buisness.controller;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 import com.gestionmagasin.beans.Categories;
 import com.gestionmagasin.buisness.service.Singleton;
@@ -13,53 +12,99 @@ public class CategoriesController {
 	private Statement st;
 	private PreparedStatement prepst;
 	private ResultSet rs;
+	private boolean check;
 	
+	/*AJOUTER*/
 	public boolean ajouterCategorie (String libelle) {
 		
 		con = Singleton.getInstance().getConnection();
-		boolean check = false;
+		check = false;
 		try {
-			st = con.createStatement();
-			int result = st.executeUpdate("insert into categories (libelle_categorie) values ('" + libelle +"')");
-			
+			prepst = con.prepareStatement("insert into categories (libelle_categorie) values (?)");
+			prepst.setString(1, libelle);
+
+			int result = prepst.executeUpdate();
 			
 			if(result > 0)
 				check = true;
 				
-				
-			rs.close();
-			st.close();	
+			prepst.close();	
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
 		return check;
-		
 	}
 	
-	public void modifierCategorie(int id) {
+	/*MODIFIER*/
+	public boolean modifierCategorie(int id, String libelle) {
 		
+		con = Singleton.getInstance().getConnection();
+		check = false;
+		try {
+			prepst = con.prepareStatement("update categories set libelle_categorie=? where id=?");
+			prepst.setString(1, libelle);
+			prepst.setInt(2, id);
+
+			int result = prepst.executeUpdate();
+			
+			
+			if(result > 0)
+				check = true;
+				
+			
+			prepst.close();	
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return check;
+
 	}
 	
-	public void supprimerCategorie(int id) {
+	/*SUPPRIMER*/
+	public boolean supprimerCategorie(int id) {
 		
+		con = Singleton.getInstance().getConnection();
+		check = false;
+		try {
+			prepst = con.prepareStatement("delete from categories where id=?");
+			prepst.setInt(1, id);
+	
+			int result = prepst.executeUpdate();
+			
+			if(result == 1)
+				check = true;
+				
+
+			prepst.close();	
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return check;
 	}
 	
+	
+	/*AFFICHER SELON ID*/
 	public Categories getCategorie(int id) {
 		con = Singleton.getInstance().getConnection();
-		Categories cat = new Categories();
-
+		Categories cat = null;
 		try {
 			st = con.createStatement();
-			rs = st.executeQuery("select * from Categories where id=" + id);
-			
+			rs = st.executeQuery("select * from categories where id=" + id);
 			
 			if(!rs.next()) {
 				cat = null;
 			}
 			else {
+				rs.absolute(0);
+
 				while(rs.next()) {
+					cat = new Categories();
 					cat.setId(rs.getInt("id"));
 					cat.setLibelleCategorie(rs.getString("libelle_categorie"));
 				}
@@ -75,21 +120,24 @@ public class CategoriesController {
 		return cat;
 	}
 	
+	/*AFFICHER TOUS*/
 	public ArrayList<Categories> getCategorie() {
 		con = Singleton.getInstance().getConnection();
 		ArrayList<Categories> list = new ArrayList<Categories>();
-		Categories cat = new Categories();
 
 		try {
 			st = con.createStatement();
-			rs = st.executeQuery("select * from Categories");
+			rs = st.executeQuery("select * from categories");
 			
 			
 			if(!rs.next()) {
 				list = null;
 			}
 			else {
+				rs.absolute(0);
 				while(rs.next()) {
+					Categories cat = new Categories();
+					
 					cat.setId(rs.getInt("id"));
 					cat.setLibelleCategorie(rs.getString("libelle_categorie"));
 					

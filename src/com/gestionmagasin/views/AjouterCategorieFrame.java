@@ -19,8 +19,13 @@ import java.awt.event.ActionEvent;
 
 public class AjouterCategorieFrame extends JFrame {
 
-	private JPanel contentPane;
-	private JTextField textField;
+	private CategoriesController catControl;
+	
+	private JPanel mainPanel;
+	private JTextField libelleTextField;
+	private JLabel libelleLabel;
+	private JButton ajouterButton;
+	private JButton annulerButton;
 
 	/**
 	 * Launch the application.
@@ -42,34 +47,54 @@ public class AjouterCategorieFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public AjouterCategorieFrame() {
+		
+		/*INITIATION DU CONTAINER*/
 		setTitle("Ajouter Cat\u00E9gorie");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 300, 150);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
 		setLocationRelativeTo(null);
 
 		
+		/*CREATION DES COMPOSANTS*/
+		mainPanel = new JPanel();
+		mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		mainPanel.setLayout(null);
+
+		libelleLabel = new JLabel("Libell\u00E9");
+		libelleLabel.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		libelleLabel.setBounds(10, 28, 44, 14);
 		
-		JLabel lblNewLabel = new JLabel("Libell\u00E9");
-		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblNewLabel.setBounds(10, 28, 44, 14);
-		contentPane.add(lblNewLabel);
+		libelleTextField = new JTextField();
+		libelleTextField.setBounds(64, 27, 210, 20);
+		libelleTextField.setColumns(10);
 		
-		JButton btnNewButton = new JButton("Ajouter");
-		btnNewButton.addActionListener(new ActionListener() {
+		ajouterButton = new JButton("Ajouter");
+		ajouterButton.setBounds(64, 77, 89, 23);
+		
+		annulerButton = new JButton("Annuler");
+		annulerButton.setBounds(185, 77, 89, 23);
+		
+
+		/*AJOUT DES COMPOSANTS*/
+		setContentPane(mainPanel);
+		mainPanel.add(ajouterButton);
+		mainPanel.add(annulerButton);
+		mainPanel.add(libelleTextField);
+		mainPanel.add(libelleLabel);
+		
+		/*ACTION LISTENERS*/
+		
+		//Ajouter
+		ajouterButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				String libelle = textField.getText();
+				String libelle = libelleTextField.getText();
 				
-				CategoriesController catControl = new CategoriesController();
+				catControl = new CategoriesController();
 				boolean result = catControl.ajouterCategorie(libelle);
 				
 				if(result)
 				{
-					
+					JOptionPane.showMessageDialog(null,"Opération effectuée!");  
 				}
 				else
 				{
@@ -81,30 +106,12 @@ public class AjouterCategorieFrame extends JFrame {
 				
 			}
 		});
-		btnNewButton.setBounds(64, 77, 89, 23);
-		contentPane.add(btnNewButton);
 		
-		JButton btnNewButton_1 = new JButton("Annuler");
-		btnNewButton_1.addActionListener(new ActionListener() {
+		//Annuler
+		annulerButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
-				int comfirm = JOptionPane.showConfirmDialog(null, "Voulez-vous vraiment quitter?", "Comfirmation", JOptionPane.YES_NO_OPTION);
-				
-				if(comfirm == JOptionPane.YES_OPTION)
-					dispose();
-				
+				dispose();
 			}
-		});
-		btnNewButton_1.setBounds(185, 77, 89, 23);
-		contentPane.add(btnNewButton_1);
-		
-		textField = new JTextField();
-		textField.setBounds(64, 27, 210, 20);
-		contentPane.add(textField);
-		textField.setColumns(10);
-		
-		
-		
-		
+		});	
 	}
 }
